@@ -5,8 +5,9 @@ const HEIGHT = 500;
 const WIDTH = 500;
 const SCALE = 20;
 const INTERVAL = 100;
+const START_POSITION = generateStartPosition();
 
-const START_POSITION = { x: 20, y: 20 };
+let directionUpdated = false; // Used to prevent changing direction twice in one game tick.
 
 window.addEventListener("keydown", (event) => {
 	const direction = event.key.replace("Arrow", "");
@@ -19,6 +20,8 @@ function setup() {
 	food.createFood();
 
 	window.setInterval(() => {
+		directionUpdated = false;
+
 		context.clearRect(0, 0, WIDTH, HEIGHT);
 		snake.shiftCells();
 		snake.move(snake.xSpeed, snake.ySpeed);
@@ -41,38 +44,42 @@ let snake = {
 	update: (direction) => {
 		switch (direction) {
 			case "Up":
-				if (snake.ySpeed === 1 * SCALE) {
+				if (snake.ySpeed === 1 * SCALE || snake.yspeed === -1 * SCALE || directionUpdated) {
 					break;
 				}
 
 				snake.ySpeed = -1 * SCALE;
 				snake.xSpeed = 0;
+				directionUpdated = true;
 				break;
 			case "Down":
-				if (snake.ySpeed === -1 * SCALE) {
+				if (snake.ySpeed === -1 * SCALE || snake.ySpeed === 1 * SCALE || directionUpdated) {
 					break;
 				}
 
 				snake.ySpeed = 1 * SCALE;
 				snake.xSpeed = 0;
+				directionUpdated = true;
 				break;
 
 			case "Left":
-				if (snake.xSpeed === 1 * SCALE) {
+				if (snake.xSpeed === 1 * SCALE || snake.xSpeed === -1 * SCALE || directionUpdated) {
 					break;
 				}
 
 				snake.xSpeed = -1 * SCALE;
 				snake.ySpeed = 0;
+				directionUpdated = true;
 				break;
 
 			case "Right":
-				if (snake.xSpeed === -1 * SCALE) {
+				if (snake.xSpeed === -1 * SCALE || snake.xSpeed === 1 * SCALE || directionUpdated) {
 					break;
 				}
 
 				snake.xSpeed = 1 * SCALE;
 				snake.ySpeed = 0;
+				directionUpdated = true;
 				break;
 		}
 	},
@@ -108,8 +115,8 @@ let snake = {
 		}
 	},
 	eat: () => {
-		snake.grow();
 		food.createFood();
+		snake.grow();
 		score.score++;
 	},
 	grow: () => {
@@ -130,6 +137,12 @@ let snake = {
 		score.reset();
 		food.createFood();
 	},
+	generateStartPosition: () => {
+		return {
+			x: SCALE * Math.floor(Math.random() * (WIDTH / SCALE)),
+			y: SCALE * Math.floor(Math.random() * (HEIGHT / SCALE)),
+		};
+	},
 };
 
 let food = {
@@ -140,10 +153,17 @@ let food = {
 	createFood: () => {
 		food.position.x = SCALE * Math.floor(Math.random() * (WIDTH / SCALE));
 		food.position.y = SCALE * Math.floor(Math.random() * (HEIGHT / SCALE));
+		console.log("Food x:", food.position.x, "Food y:", food.position.y);
+		console.log(
+			"Snake x:",
+			snake.cells[snake.cells.length - 1].x,
+			"Snake y:",
+			snake.cells[snake.cells.length - 1].y
+		);
 
 		// If the new food spawns underneath the snakes body, regenerate it
 		for (let i = 0; i < snake.cells.length; i++) {
-			if (snake.cells[i].x == food.position.x && snake.cells[0].y == food.position.y) {
+			if (snake.cells[i].x === food.position.x && snake.cells[i].y === food.position.y) {
 				food.createFood();
 			}
 		}
@@ -168,3 +188,16 @@ let score = {
 	},
 };
 setup();
+
+function getWallDistances() {
+	return [
+		snake.cells[0].y,
+		WIDTH - snake.cells[0].x,
+		HEIGHT - snake.cells[0].y,
+		snake.cells[0].x,
+	]; // N, E, S, W
+}
+
+function getFoodDistance() {
+	return [food.x - snake.cells[0].x, food.y - snake.cells[0].y];
+}
