@@ -5,7 +5,12 @@ const HEIGHT = 500;
 const WIDTH = 500;
 const SCALE = 20;
 const INTERVAL = 100;
-const START_POSITION = generateStartPosition();
+const START_POSITION = function () {
+	return {
+		x: SCALE * Math.floor(Math.random() * (WIDTH / SCALE)),
+		y: SCALE * Math.floor(Math.random() * (HEIGHT / SCALE)),
+	};
+};
 
 let directionUpdated = false; // Used to prevent changing direction twice in one game tick.
 
@@ -32,7 +37,7 @@ function setup() {
 }
 
 let snake = {
-	cells: [{ x: START_POSITION.x, y: START_POSITION.y }],
+	cells: [{ x: START_POSITION().x, y: START_POSITION().y }],
 	xSpeed: SCALE,
 	ySpeed: 0,
 	draw: () => {
@@ -126,7 +131,7 @@ let snake = {
 		});
 	},
 	die: () => {
-		snake.cells = [{ x: START_POSITION.x, y: START_POSITION.y }];
+		snake.cells = [{ x: START_POSITION().x, y: START_POSITION().y }];
 		snake.xSpeed = 0;
 		snake.ySpeed = 0;
 
@@ -136,12 +141,6 @@ let snake = {
 
 		score.reset();
 		food.createFood();
-	},
-	generateStartPosition: () => {
-		return {
-			x: SCALE * Math.floor(Math.random() * (WIDTH / SCALE)),
-			y: SCALE * Math.floor(Math.random() * (HEIGHT / SCALE)),
-		};
 	},
 };
 
