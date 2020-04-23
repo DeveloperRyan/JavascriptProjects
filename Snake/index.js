@@ -15,7 +15,7 @@ const START_POSITION = function () {
 let directionUpdated = false; // Used to prevent changing direction twice in one game tick.
 
 window.addEventListener("keydown", (event) => {
-	const direction = event.key.replace("Arrow", "");
+	const direction = event.key.replace("Arrow", "").toLowerCase();
 	snake.update(direction);
 });
 
@@ -52,7 +52,8 @@ let snake = {
 	},
 	update: (direction) => {
 		switch (direction) {
-			case "Up":
+			case "up":
+			case "w":
 				if (snake.ySpeed === 1 * SCALE || snake.yspeed === -1 * SCALE || directionUpdated) {
 					break;
 				}
@@ -61,7 +62,8 @@ let snake = {
 				snake.xSpeed = 0;
 				directionUpdated = true;
 				break;
-			case "Down":
+			case "down":
+			case "s":
 				if (snake.ySpeed === -1 * SCALE || snake.ySpeed === 1 * SCALE || directionUpdated) {
 					break;
 				}
@@ -71,7 +73,8 @@ let snake = {
 				directionUpdated = true;
 				break;
 
-			case "Left":
+			case "left":
+			case "a":
 				if (snake.xSpeed === 1 * SCALE || snake.xSpeed === -1 * SCALE || directionUpdated) {
 					break;
 				}
@@ -81,7 +84,8 @@ let snake = {
 				directionUpdated = true;
 				break;
 
-			case "Right":
+			case "right":
+			case "d":
 				if (snake.xSpeed === -1 * SCALE || snake.xSpeed === 1 * SCALE || directionUpdated) {
 					break;
 				}
@@ -187,13 +191,13 @@ setup();
 
 function getWallDistances() {
 	return [
-		snake.cells[0].y,
-		WIDTH - snake.cells[0].x,
-		HEIGHT - snake.cells[0].y,
-		snake.cells[0].x,
-	]; // N, E, S, W
+		snake.cells[0].y, // North
+		WIDTH - SCALE - snake.cells[0].x, // East
+		HEIGHT - SCALE - snake.cells[0].y, // South
+		snake.cells[0].x, // West
+	];
 }
 
 function getFoodDistance() {
-	return [food.x - snake.cells[0].x, food.y - snake.cells[0].y];
+	return [food.position.x - snake.cells[0].x, food.position.y - snake.cells[0].y];
 }
