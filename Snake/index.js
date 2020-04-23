@@ -19,6 +19,10 @@ window.addEventListener("keydown", (event) => {
 	snake.update(direction);
 });
 
+window.addEventListener("beforeunload", (event) => {
+	localStorage.setItem("highscore", score.highscore);
+});
+
 function setup() {
 	canvas.height = HEIGHT;
 	canvas.width = WIDTH;
@@ -38,7 +42,7 @@ function setup() {
 
 let snake = {
 	cells: [{ x: START_POSITION().x, y: START_POSITION().y }],
-	xSpeed: SCALE,
+	xSpeed: 0,
 	ySpeed: 0,
 	draw: () => {
 		for (cell of snake.cells) {
@@ -152,13 +156,6 @@ let food = {
 	createFood: () => {
 		food.position.x = SCALE * Math.floor(Math.random() * (WIDTH / SCALE));
 		food.position.y = SCALE * Math.floor(Math.random() * (HEIGHT / SCALE));
-		console.log("Food x:", food.position.x, "Food y:", food.position.y);
-		console.log(
-			"Snake x:",
-			snake.cells[snake.cells.length - 1].x,
-			"Snake y:",
-			snake.cells[snake.cells.length - 1].y
-		);
 
 		// If the new food spawns underneath the snakes body, regenerate it
 		for (let i = 0; i < snake.cells.length; i++) {
@@ -174,7 +171,7 @@ let food = {
 };
 
 let score = {
-	highscore: 0,
+	highscore: localStorage.getItem("highscore") || 0,
 	score: 0,
 	drawScore: () => {
 		context.fillStyle = "white";
