@@ -1,13 +1,54 @@
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
 
-const HEIGHT = 500;
-const WIDTH = 500;
+// Get cached settings
+let selectedTheme =
+	localStorage.getItem("theme") || document.getElementById("theme-select").toLowerCase();
+let selectedSpeed =
+	localStorage.getItem("speed") || document.querySelector('input[name="speed"]:checked').value;
+let selectedSize =
+	localStorage.getItem("size") || document.querySelector('input[name="size"]:checked').value;
+
+document.getElementById("theme-select").value = selectedTheme;
+document
+	.querySelector('input[name="size"][id=' + selectedSize + "]")
+	.setAttribute("checked", "true");
+document
+	.querySelector('input[name="speed"][id=' + selectedSpeed + "]")
+	.setAttribute("checked", "true");
+
+function getSize() {
+	switch (selectedSize) {
+		case "sizeSmall":
+			return 300;
+		case "sizeRegular":
+			return 500;
+		case "sizeLarge":
+			return 700;
+	}
+}
+
+function getSpeed() {
+	switch (selectedSpeed) {
+		case "speedSlow":
+			return 250;
+		case "speedRegular":
+			return 100;
+		case "speedFast":
+			return 70;
+		case "speedZoom":
+			return 30;
+	}
+}
+
+const HEIGHT = getSize();
+
+const WIDTH = getSize();
+
 const SCALE = 20;
-const INTERVAL = 100;
+const INTERVAL = getSpeed();
 
-let selectedTheme = document.getElementById("theme-select");
-
+// Generate the starting position
 const START_POSITION = function () {
 	return {
 		x: SCALE * Math.floor(Math.random() * (WIDTH / SCALE)),
@@ -18,7 +59,7 @@ const START_POSITION = function () {
 let directionUpdated = false; // Used to prevent changing direction twice in one game tick.
 
 window.addEventListener("change", (event) => {
-	theme.changeTheme(selectedTheme.value.toLowerCase());
+	selectedTheme = document.getElementById("theme-select").value.toLowerCase();
 });
 
 window.addEventListener("keydown", (event) => {
@@ -26,15 +67,18 @@ window.addEventListener("keydown", (event) => {
 	snake.update(direction);
 });
 
+// On page exit or reload, save necessary values
 window.addEventListener("beforeunload", (event) => {
 	localStorage.setItem("highscore", score.highscore);
+	localStorage.setItem("theme", selectedTheme);
+	localStorage.setItem("speed", document.querySelector('input[name="speed"]:checked').value);
+	localStorage.setItem("size", document.querySelector('input[name="size"]:checked').value);
 });
 
 function setup() {
 	canvas.height = HEIGHT;
 	canvas.width = WIDTH;
-	theme.changeTheme(selectedTheme.value.toLowerCase());
-	theme.updateTheme();
+	theme.changeTheme(selectedTheme);
 
 	food.createFood();
 
@@ -199,11 +243,11 @@ let score = {
 };
 
 const theme = {
-	inchworm: {
-		snake: "#c2f970",
-		background: "#44344f",
-		border: "#564d80",
-		food: "#EDCB96",
+	nyx: {
+		snake: "#816271",
+		background: "#20394f",
+		border: "#0f2a3f",
+		food: "#f6d6bd",
 		text: "#ffffff",
 	},
 	icecream: {
@@ -218,13 +262,6 @@ const theme = {
 		background: "#332c50",
 		border: "",
 		food: "#46878f",
-		text: "#ffffff",
-	},
-	nyx: {
-		snake: "#816271",
-		background: "#20394f",
-		border: "#0f2a3f",
-		food: "#f6d6bd",
 		text: "#ffffff",
 	},
 	grayscale: {
@@ -248,16 +285,14 @@ const theme = {
 		food: "#f7ffae",
 		text: "#ffffff",
 	},
-
 	selected: {
-		snake: "#c2f970",
-		background: "#44344f",
-		border: "#564d80",
-		food: "#d3fcd5",
+		snake: "#816271",
+		background: "#20394f",
+		border: "#0f2a3f",
+		food: "#f6d6bd",
 		text: "#ffffff",
 	},
 	changeTheme: (newTheme) => {
-		console.log(newTheme);
 		theme.selected.snake = theme[newTheme].snake;
 		theme.selected.background = theme[newTheme].background;
 		theme.selected.border = theme[newTheme].border;
@@ -271,6 +306,7 @@ const theme = {
 		canvas.style.borderColor = theme.selected.border;
 	},
 };
+
 setup();
 
 // For future use

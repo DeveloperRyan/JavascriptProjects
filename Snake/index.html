@@ -8,16 +8,49 @@
 	</head>
 	<body>
 		<div id="canvas-container">
-			<label for="theme-select">Themes</label>
-			<select name="themes" id="theme-select">
-				<option value="Inchworm">Inchworm</option>
-				<option value="Icecream">Icecream</option>
-				<option value="Kirokaze">Kirokaze</option>
-				<option value="Nyx">Nyx</option>
-				<option value="Grayscale">Grayscale</option>
-				<option value="Monoramp">Monoramp</option>
-				<option value="Blessing">Blessing</option>
-			</select>
+			<div class="setting-container">
+				<h2>Settings</h2>
+
+				<h3>Theme</h3>
+				<select name="themes" id="theme-select">
+					<option value="nyx">Nyx</option>
+					<option value="icecream">Icecream</option>
+					<option value="kirokaze">Kirokaze</option>
+					<option value="grayscale">Grayscale</option>
+					<option value="monoramp">Monoramp</option>
+					<option value="blessing">Blessing</option>
+				</select>
+
+				<h3>Speed</h3>
+				<div class="form-group">
+					<input type="radio" name="speed" id="speedSlow" value="speedSlow" />
+					<label for="speedSlow">Slow</label>
+					<input
+						type="radio"
+						name="speed"
+						id="speedRegular"
+						value="speedRegular"
+						checked
+					/>
+					<label for="speedRegular">Regular</label>
+					<input type="radio" name="speed" id="speedFast" value="speedFast" />
+					<label for="speedFast">Fast</label>
+					<input type="radio" name="speed" id="speedZoom" value="speedZoom" />
+					<label for="speedZoom">Zoooom</label>
+				</div>
+
+				<h3>Size</h3>
+				<div class="form-group">
+					<input type="radio" name="size" id="sizeSmall" value="sizeSmall" />
+					<label for="sizeSmall">Small</label>
+					<input type="radio" name="size" id="sizeRegular" value="sizeRegular" checked />
+					<label for="sizeRegular">Regular</label>
+					<input type="radio" name="size" id="sizeLarge" value="sizeLarge" />
+					<label for="sizeLarge">Large</label>
+				</div>
+
+				<input type="button" value="Update" onclick="location.reload()" />
+			</div>
 			<canvas id="canvas">
 				Canvas not supported.
 			</canvas>
